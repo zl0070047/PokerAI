@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "server": "ts-node server/index.ts",
+    "server": "ts-node-esm server/index.ts",
     "dev": "concurrently \"npm run server\" \"npm start\""
   },
   "devDependencies": {
