@@ -2,7 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { evaluateHand, compareHands } from './poker';
+import { evaluateHand, compareHands } from './poker.js';
 
 const app = express();
 const server = createServer(app);
