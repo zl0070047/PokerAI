@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>德州扑克游戏</title>
+    <meta charset="UTF-8">
+    <style>
+        .player { margin: 10px; padding: 10px; border: 1px solid #ccc; }
+        .active { background-color: #e6ffe6; }
+        .community-cards { margin: 20px 0; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div id="game-status">
+        <h2>游戏状态</h2>
+        <div id="room-info"></div>
+        <div id="community-cards" class="community-cards"></div>
+        <div id="players"></div>
+        <div id="pot"></div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io('http://localhost:3001');
+        
+        socket.on('connect', () => {
+            console.log('已连接到服务器');
+            // 自动加入房间
+            socket.emit('joinRoom', {
+                roomId: 'TEST',
+                playerName: '观察者',
+                avatar: 'avatar.png'
+            });
+        });
+
+        socket.on('gameStateUpdated', (state) => {
+            updateGameDisplay(state);
+        });
+
+        socket.on('error', (error) => {
+            document.getElementById('error').textContent = error;
+        });
+
+        function updateGameDisplay(state) {
+            // 显示公共牌
+            const communityCards = document.getElementById('community-cards');
+            communityCards.textContent = `公共牌: ${state.communityCards.join(' ')}`;
+
+            // 显示玩家信息
+            const playersDiv = document.getElementById('players');
+            playersDiv.innerHTML = '';
+            state.players.forEach(player => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = `player ${player.id === socket.id ? 'active' : ''}`;
+                playerDiv.innerHTML = `
+                    玩家: ${player.name}<br>
+                    筹码: ${player.chips}<br>
+                    下注: ${player.bet}<br>
+                    手牌: ${player.cards.join(' ')}<br>
+                    状态: ${player.isActive ? '游戏中' : '已弃牌'}
+                `;
+                playersDiv.appendChild(playerDiv);
+            });
+
+            // 显示奖池
+            document.getElementById('pot').textContent = `奖池: ${state.pot}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+// ... 其他代码保持不变 ...
+import { createSocket } from './socketConfig';
+
+// 在 createTestPlayers 函数中修改 socket 创建部分
+const socket = createSocket();
+// ... 其他代码保持不变 ...
